@@ -1,4 +1,5 @@
-create function date_ru(_date date) returns text
+drop function if exists accounting.date_ru(_date date);
+create or replace function accounting.date_ru(_date date) returns text
     language plpgsql
 as
 $$
@@ -8,15 +9,17 @@ DECLARE
     _day INT;
     _month int;
     _year int;
+    _current_year int;
 BEGIN
     _year = date_part('year', _date);
     _month = date_part('month', _date);
     _day = date_part('day', _date);
-    SELECT _day || '.' || _month || '.' || _year as daysto into _response;
+    --SELECT _day || '.' || _month || '.' || _year as daysto into _response;
+    SET lc_time = 'ru_RU.UTF8';
+    SELECT to_char(_date, 'DD.MM.YYYY') into _response;
 
     RETURN _response;
 END
 $$;
 
-alter function date_ru(date) owner to neuroplane;
-
+alter function accounting.date_ru(date) owner to neuroplane;
